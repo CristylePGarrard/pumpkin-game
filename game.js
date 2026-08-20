@@ -11,56 +11,6 @@ let draggedItem = null;
 let mouseX = 0;
 let mouseY = 0;
 
-const items = [
-    {
-        id: "milk",
-        name: "Milk",
-        emoji: "🥛",
-        x: 150,
-        y: 470
-    },
-    {
-        id: "apple",
-        name: "Apple",
-        emoji: "🍎",
-        x: 350,
-        y: 470
-    },
-    {
-        id: "burger",
-        name: "Burger",
-        emoji: "🍔",
-        x: 550,
-        y: 470
-    },
-    {
-        id: "carrot",
-        name: "Carrot",
-        emoji: "🥕",
-        x: 750,
-        y: 470
-    }
-];
-
-const requests = [
-    {
-        text: "Give me the milk!",
-        correctItem: "milk"
-    },
-    {
-        text: "I want an apple!",
-        correctItem: "apple"
-    },
-    {
-        text: "Give me a burger!",
-        correctItem: "burger"
-    },
-    {
-        text: "Can I have a carrot?",
-        correctItem: "carrot"
-    }
-];
-
 const wrongResponses = [
     "I don't want that!",
     "Ewwww!",
