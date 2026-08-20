@@ -39,4 +39,7 @@ Next Steps
 [ ]  Existing score system still works
 [ ]  No real audio files required yet
 [ ]  State transitions remain centralized                 
+
+
+Ask → choose → correct/wrong → react → eat/throw → ask again.
 ---
