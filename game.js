@@ -210,7 +210,9 @@ function checkAnswer(item) {
             "Mmmm!",
             "Delicious!",
             "Nom nom nom!",
-            "That's the stuff!"
+            "That's the stuff!",
+            "That hits the spot!",
+            "Just what i needed!"
         ]);
     } else {
         messageElement.textContent = randomItem(wrongResponses);
