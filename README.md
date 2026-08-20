@@ -43,3 +43,19 @@ Next Steps
 
 Ask → choose → correct/wrong → react → eat/throw → ask again.
 ---
+```
+ASKING
+   ↓
+player gives correct item
+   ↓
+HAPPY
+   ↓
+item disappears
+   ↓
+EATING
+   ↓
+eating sound
+   ↓
+new request
+```
+---
