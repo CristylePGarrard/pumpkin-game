@@ -14,15 +14,9 @@ let mouseY = 0;
 let gameState = "asking";
 let stateTimer = null;
 
-const wrongResponses = [
-    "I don't want that!",
-    "Ewwww!",
-    "That's not what I asked for!",
-    "NOPE!",
-    "Are you even listening to me?",
-    "I can't eat that!",
-    "Why would you give me that?!"
-];
+const currentCharacter = characters[0];
+
+let currentDialogue = null;
 
 function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
@@ -45,10 +39,12 @@ function setGameState(newState, duration = null) {
 }
 
 function newRequest() {
-    currentRequest = randomItem(requests);
+    currentRequest = randomItem(
+        currentCharacter.dialogue.requests
+    );
 
-    messageElement.textContent = currentRequest.text;
-    
+    showDialogue(currentRequest);
+ 
     setGameState("asking");
 }
 
@@ -56,6 +52,11 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawRestaurant();
+
+    if (currentRequest) {
+        drawSpeechBubble(currentDialogue.text);
+    }
+
     drawCharacter();
     drawItems();
 }
@@ -78,24 +79,71 @@ function drawRestaurant() {
     ctx.fillRect(0, 395, canvas.width, 10);
 }
 
-function drawCharacter() {
-    const pumpkin = characters[0];
+function drawSpeechBubble(text) {
+    if (!text) {
+        return;
+    }
 
+    const bubbleX = 300;
+    const bubbleY = 40;
+    const bubbleWidth = 300;
+    const bubbleHeight = 80;
+
+    // Bubble
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.roundRect(
+        bubbleX,
+        bubbleY,
+        bubbleWidth,
+        bubbleHeight,
+        15
+    );
+    ctx.fill();
+    ctx.stroke();
+
+    // Bubble tail
+    ctx.beginPath();
+    ctx.moveTo(430, 120);
+    ctx.lineTo(450, 140);
+    ctx.lineTo(470, 120);
+    ctx.closePath();
+
+    ctx.fill();
+    ctx.stroke();
+
+    // Text
+    ctx.fillStyle = "#222";
+    ctx.font = "20px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(
+        text,
+        bubbleX + bubbleWidth / 2,
+        bubbleY + bubbleHeight / 2
+    );
+}
+
+function drawCharacter() {
     let emoji;
 
     switch (gameState) {
         case "happy":
-            emoji = pumpkin.states.happy;
+            emoji = currentCharacter.states.happy;
             break;
 
         case "angry":
-            emoji = pumpkin.states.angry;
+            emoji = currentCharacter.states.angry;
             break;
 
         case "asking":
         case "waiting":
         default:
-            emoji = pumpkin.states.asking;
+            emoji = currentCharacter.states.asking;
             break;
     }
 
@@ -108,7 +156,7 @@ function drawCharacter() {
     ctx.font = "24px sans-serif";
     ctx.fillStyle = "#222";
 
-    ctx.fillText(pumpkin.name, 450, 275);
+    ctx.fillText(currentCharacter.name, 450, 275);
 }
 
 function drawItems() {
@@ -197,23 +245,43 @@ function checkAnswer(item) {
 
         scoreElement.textContent = `Score: ${score}`;
 
-        messageElement.textContent = randomItem([
-            "Yum!",
-            "Mmmm!",
-            "Delicious!",
-            "Nom nom nom!",
-            "That's the stuff!",
-            "That hits the spot!",
-            "Just what i needed!"
-        ]);
+        const response = randomItem(
+            currentCharacter.dialogue.happy
+        );
+
+        showDialogue(response);
 
         setGameState("happy", 1500);
 
     } else {
-        messageElement.textContent = randomItem(wrongResponses);
+        const response = randomItem(
+            currentCharacter.dialogue.wrong
+        );
+
+        showDialogue(response);
 
         setGameState("angry", 1500);
     }
+}
+
+function playAudio(audioPath) {
+    if (!audioPath) {
+        return;
+    }
+
+    const audio = new Audio(audioPath);
+
+    audio.play().catch(() => {
+        console.log("Audio unavailable:", audioPath);
+    });
+}
+
+function showDialogue(dialogue) {
+    currentDialogue = dialogue;
+
+    playAudio(dialogue.audio);
+
+    draw();
 }
 
 nextRequestButton.addEventListener("click", newRequest);
