@@ -5,13 +5,20 @@ const scoreElement = document.getElementById("score");
 const messageElement = document.getElementById("message");
 const nextRequestButton = document.getElementById("nextRequest");
 
+const GAME_STATES = {
+    ASKING: "asking",
+    HAPPY: "happy",
+    ANGRY: "angry",
+    EATING: "eating"
+};
+
 let score = 0;
 let currentRequest = null;
 let draggedItem = null;
 let mouseX = 0;
 let mouseY = 0;
 
-let gameState = "asking";
+let gameState = GAME_STATES.ASKING;
 let stateTimer = null;
 
 const currentCharacter = characters[0];
@@ -22,20 +29,48 @@ function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-function setGameState(newState, duration = null) {
+function setGameState(newState) {
     gameState = newState;
 
     if (stateTimer) {
         clearTimeout(stateTimer);
     }
 
-    if (duration) {
-        stateTimer = setTimeout(() => {
-            setGameState("asking");
-        }, duration);
+    draw();
+}
+
+function transitionTo(newState) {
+    gameState = newState;
+
+    if (stateTimer) {
+        clearTimeout(stateTimer);
     }
 
     draw();
+
+    switch (newState) {
+        case GAME_STATES.ASKING:
+            break;
+
+        case GAME_STATES.HAPPY:
+            stateTimer = setTimeout(() => {
+                transitionTo(GAME_STATES.EATING);
+            }, 1500);
+            break;
+
+        case GAME_STATES.ANGRY:
+            stateTimer = setTimeout(() => {
+                showDialogue(currentRequest);
+                transitionTo(GAME_STATES.ASKING);
+            }, 1500);
+            break;
+
+        case GAME_STATES.EATING:
+            stateTimer = setTimeout(() => {
+                newRequest();
+            }, 1500);
+            break;
+    }
 }
 
 function newRequest() {
@@ -44,8 +79,8 @@ function newRequest() {
     );
 
     showDialogue(currentRequest);
- 
-    setGameState("asking");
+
+    transitionTo(GAME_STATES.ASKING);
 }
 
 function draw() {
@@ -132,16 +167,18 @@ function drawCharacter() {
     let emoji;
 
     switch (gameState) {
-        case "happy":
+        case GAME_STATES.HAPPY:
             emoji = currentCharacter.states.happy;
             break;
 
-        case "angry":
+        case GAME_STATES.ANGRY:
             emoji = currentCharacter.states.angry;
             break;
 
-        case "asking":
-        case "waiting":
+        case GAME_STATES.EATING:
+            emoji = currentCharacter.states.happy
+
+        case GAME_STATES.ASKING:
         default:
             emoji = currentCharacter.states.asking;
             break;
@@ -251,7 +288,7 @@ function checkAnswer(item) {
 
         showDialogue(response);
 
-        setGameState("happy", 1500);
+        transitionTo(GAME_STATES.HAPPY);
 
     } else {
         const response = randomItem(
@@ -260,7 +297,7 @@ function checkAnswer(item) {
 
         showDialogue(response);
 
-        setGameState("angry", 1500);
+        transitionTo(GAME_STATES.ANGRY);
     }
 }
 
