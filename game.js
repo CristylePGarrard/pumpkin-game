@@ -11,6 +11,9 @@ let draggedItem = null;
 let mouseX = 0;
 let mouseY = 0;
 
+let gameState = "asking";
+let stateTimer = null;
+
 const wrongResponses = [
     "I don't want that!",
     "Ewwww!",
@@ -25,12 +28,28 @@ function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
+function setGameState(newState, duration = null) {
+    gameState = newState;
+
+    if (stateTimer) {
+        clearTimeout(stateTimer);
+    }
+
+    if (duration) {
+        stateTimer = setTimeout(() => {
+            setGameState("asking");
+        }, duration);
+    }
+
+    draw();
+}
+
 function newRequest() {
     currentRequest = randomItem(requests);
 
     messageElement.textContent = currentRequest.text;
-
-    draw();
+    
+    setGameState("asking");
 }
 
 function draw() {
@@ -60,16 +79,36 @@ function drawRestaurant() {
 }
 
 function drawCharacter() {
+    const pumpkin = characters[0];
+
+    let emoji;
+
+    switch (gameState) {
+        case "happy":
+            emoji = pumpkin.states.happy;
+            break;
+
+        case "angry":
+            emoji = pumpkin.states.angry;
+            break;
+
+        case "asking":
+        case "waiting":
+        default:
+            emoji = pumpkin.states.asking;
+            break;
+    }
+
     ctx.font = "100px serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillText("🎃", 450, 200);
+    ctx.fillText(emoji, 450, 200);
 
     ctx.font = "24px sans-serif";
     ctx.fillStyle = "#222";
 
-    ctx.fillText("Customer", 450, 275);
+    ctx.fillText(pumpkin.name, 450, 275);
 }
 
 function drawItems() {
@@ -118,6 +157,9 @@ function findItemAtPosition(x, y) {
 }
 
 canvas.addEventListener("mousedown", (event) => {
+    if (gameState !== "asking") {
+        return;
+    }
     getMousePosition(event);
 
     const item = findItemAtPosition(mouseX, mouseY);
@@ -164,11 +206,14 @@ function checkAnswer(item) {
             "That hits the spot!",
             "Just what i needed!"
         ]);
+
+        setGameState("happy", 1500);
+
     } else {
         messageElement.textContent = randomItem(wrongResponses);
-    }
 
-    draw();
+        setGameState("angry", 1500);
+    }
 }
 
 nextRequestButton.addEventListener("click", newRequest);

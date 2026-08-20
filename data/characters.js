@@ -2,6 +2,12 @@ const characters = [
     {
         id: "pumpkin",
         name: "Pumpkin",
-        emoji: "🎃"
+
+        states: {
+            idle: "🎃",
+            asking: "🎃",
+            happy: "😋",
+            angry: "😠"
+        }
     }
 ];
