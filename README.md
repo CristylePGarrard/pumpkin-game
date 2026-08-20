@@ -29,5 +29,14 @@ Remake of the old flash Pumpkin game.
                  ASKING
 ```
 ---
-                 
-
+Next Steps
+[ ]  Correct item disappears from the counter
+[ ]  Character enters EATING
+[ ]  Eating animation plays
+[ ]  Eating sound is selected from character data
+[ ]  After eating, a new request appears
+[ ]  Wrong items still repeat the same request
+[ ]  Existing score system still works
+[ ]  No real audio files required yet
+[ ]  State transitions remain centralized                 
+---
