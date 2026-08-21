@@ -14,16 +14,19 @@ const GAME_STATES = {
 
 let score = 0;
 let currentRequest = null;
+let currentDialogue = null;
+let eatenItem = null;
 let draggedItem = null;
 let mouseX = 0;
 let mouseY = 0;
+
+let eatingFrame = 0;
+let eatingAnimationTimer = null;
 
 let gameState = GAME_STATES.ASKING;
 let stateTimer = null;
 
 const currentCharacter = characters[0];
-
-let currentDialogue = null;
 
 function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
@@ -40,6 +43,13 @@ function setGameState(newState) {
 }
 
 function transitionTo(newState) {
+
+    if (
+        gameState === GAME_STATES.EATING && newState !== GAME_STATES.EATING
+    ) {
+        stopEatingAnimation();
+    }
+    
     gameState = newState;
 
     if (stateTimer) {
@@ -55,7 +65,7 @@ function transitionTo(newState) {
         case GAME_STATES.HAPPY:
             stateTimer = setTimeout(() => {
                 transitionTo(GAME_STATES.EATING);
-            }, 1500);
+            }, 500);
             break;
 
         case GAME_STATES.ANGRY:
@@ -66,9 +76,14 @@ function transitionTo(newState) {
             break;
 
         case GAME_STATES.EATING:
+            startEatingAnimation();
+            playEatingSound();
+
             stateTimer = setTimeout(() => {
+                stopEatingAnimation();
+                eatenItem = null;   
                 newRequest();
-            }, 1500);
+            }, 2000);
             break;
     }
 }
@@ -176,7 +191,8 @@ function drawCharacter() {
             break;
 
         case GAME_STATES.EATING:
-            emoji = currentCharacter.states.happy
+            emoji = currentCharacter.states.eating[eatingFrame % currentCharacter.states.eating.length];
+            break;
 
         case GAME_STATES.ASKING:
         default:
@@ -198,6 +214,10 @@ function drawCharacter() {
 
 function drawItems() {
     for (const item of items) {
+        if (eatenItem && item.id === eatenItem.id) {
+            continue;
+        }
+
         if (item === draggedItem) {
             continue;
         }
@@ -282,6 +302,8 @@ function checkAnswer(item) {
 
         scoreElement.textContent = `Score: ${score}`;
 
+        eatenItem = item;
+
         const response = randomItem(
             currentCharacter.dialogue.happy
         );
@@ -313,12 +335,50 @@ function playAudio(audioPath) {
     });
 }
 
+function playEatingSound() {
+    if (
+        !currentCharacter.sounds ||
+        !currentCharacter.sounds.eating ||
+        currentCharacter.sounds.eating.length === 0
+    ) {
+        return;
+    }
+
+    const sound = randomItem(
+        currentCharacter.sounds.eating
+    );
+
+    playAudio(sound);
+}
+
 function showDialogue(dialogue) {
     currentDialogue = dialogue;
 
     playAudio(dialogue.audio);
 
     draw();
+}
+
+function startEatingAnimation() {
+    eatingFrame = 0;
+    
+    if (eatingAnimationTimer) {
+        clearInterval(eatingAnimationTimer);
+    }
+
+    eatingAnimationTimer = setInterval(() => {
+        eatingFrame++;
+        draw();
+    }, 300);
+}
+
+function stopEatingAnimation() {
+    if (eatingAnimationTimer) {
+        clearInterval(eatingAnimationTimer);
+        eatingAnimationTimer = null;
+    }
+
+    eatingFrame = 0;
 }
 
 nextRequestButton.addEventListener("click", newRequest);

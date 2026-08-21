@@ -7,8 +7,9 @@ const characters = [
             idle: "🎃",
             asking: "🎃",
             happy: "😋",
-            angry: "😠"
-        },
+            angry: "😠",
+            eating: ["😋", "😮"]    
+    },
 
         dialogue: {
             requests: [
