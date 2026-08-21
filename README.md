@@ -115,3 +115,13 @@ EATING        removeItem()
 
   
 ```
+
+Next step → refactor the item/round lifecycle.
+Then:
+→ eating animation
+→ throwing animation
+→ variable round sizes
+→ character selection
+→ better speech bubbles
+→ real character artwork + voice files
+And eventually we'll be able to add a completely new character without rewriting the game engine. 🎃👻🧙‍♀️
