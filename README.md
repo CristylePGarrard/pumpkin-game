@@ -27,7 +27,7 @@ Remake of the old flash Pumpkin game.
            └────────┬────────┘
                     ▼
                  ASKING
-```
+
 ---
 Next Steps
 [ ]  Correct item disappears from the counter
@@ -40,9 +40,12 @@ Next Steps
 [ ]  No real audio files required yet
 [ ]  State transitions remain centralized                 
 
-
+```
 Ask → choose → correct/wrong → react → eat/throw → ask again.
+```
 ---
+
+```
 ASKING
    ↓
 player gives correct item
@@ -56,9 +59,9 @@ EATING
 eating sound
    ↓
 new request
-
+```
 ---
-
+```
 ROUND
 │
 ├── Request: "I want an apple!"
@@ -85,3 +88,30 @@ ROUND
            remove that item
               ↓
            same request
+
+```
+---
+```
+
+generateRound()
+      ↓
+items appear
+      ↓
+player chooses
+      ↓
+┌───────────────┐
+│               │
+CORRECT       WRONG
+│               │
+↓               ↓
+clearItems()   throwItem()
+│               │
+↓               ↓
+EATING        removeItem()
+│               │
+└───────┬───────┘
+        ↓
+  generateRound()
+
+  
+```
