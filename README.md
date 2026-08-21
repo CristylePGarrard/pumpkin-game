@@ -56,4 +56,32 @@ EATING
 eating sound
    ↓
 new request
+
 ---
+
+ROUND
+│
+├── Request: "I want an apple!"
+│
+├── Items:
+│     🍎 🥕 🍔 🥛 🍕
+│
+└── Player chooses
+       │
+       ├── CORRECT
+       │      ↓
+       │    clear counter
+       │      ↓
+       │    eating
+       │      ↓
+       │    generate new round
+       │      ↓
+       │    🍞 🍎 🍌 🥛 🥨
+       │
+       └── WRONG
+              ↓
+           throw item
+              ↓
+           remove that item
+              ↓
+           same request
