@@ -1,4 +1,4 @@
-const items = [
+const itemCatalog = [
     {
         id: "milk",
         name: "Milk",
@@ -28,3 +28,11 @@ const items = [
         y: 470
     }
 ];
+
+let items = [];
+
+function createRoundItems() {
+    items = itemCatalog.map(item => ({
+        ...item
+    }));
+}

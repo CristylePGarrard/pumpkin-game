@@ -15,7 +15,6 @@ const GAME_STATES = {
 let score = 0;
 let currentRequest = null;
 let currentDialogue = null;
-let eatenItem = null;
 let draggedItem = null;
 let mouseX = 0;
 let mouseY = 0;
@@ -81,7 +80,6 @@ function transitionTo(newState) {
 
             stateTimer = setTimeout(() => {
                 stopEatingAnimation();
-                eatenItem = null;   
                 newRequest();
             }, 2000);
             break;
@@ -89,6 +87,8 @@ function transitionTo(newState) {
 }
 
 function newRequest() {
+    createRoundItems();    
+
     currentRequest = randomItem(
         currentCharacter.dialogue.requests
     );
@@ -214,10 +214,6 @@ function drawCharacter() {
 
 function drawItems() {
     for (const item of items) {
-        if (eatenItem && item.id === eatenItem.id) {
-            continue;
-        }
-
         if (item === draggedItem) {
             continue;
         }
@@ -237,6 +233,10 @@ function drawItems() {
             mouseY
         );
     }
+}
+
+function clearItems() {
+    items = [];
 }
 
 function getMousePosition(event) {
@@ -302,7 +302,7 @@ function checkAnswer(item) {
 
         scoreElement.textContent = `Score: ${score}`;
 
-        eatenItem = item;
+        clearItems();
 
         const response = randomItem(
             currentCharacter.dialogue.happy
@@ -383,4 +383,5 @@ function stopEatingAnimation() {
 
 nextRequestButton.addEventListener("click", newRequest);
 
+createRoundItems();
 newRequest();
